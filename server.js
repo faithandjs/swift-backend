@@ -10,6 +10,7 @@ const io = require("socket.io")(http, {
 const users = {};
 const names = [];
 const nameColorPair = {};
+let i = 0
 
 io.on("connection", (socket) => {
   socket.on("username", (name) => {
@@ -17,24 +18,22 @@ io.on("connection", (socket) => {
     if (names.includes(name)) {
       response = false;
     } else {
-      response = true;
+      response = true; 
       names.push(name);
       users[socket.id] = name;
       io.to(socket.id).emit("my-id", socket.id);
       nameColorPair[socket.id] = Math.floor(Math.random() * 7 + 1);
       io.emit("in-chat", Object.values(users));
 
-      console.log(users);
-      console.log(names);
-      console.log( Object.values(users)); 
     }
     console.log(response); 
     io.emit("response", response);
   });
 
-  socket.on("msgSent", (name, msg, myId ) => {
+  socket.on("msgSent", (name, msg, myId , dateSent) => {
     let colorCode = nameColorPair[myId];
-    io.emit("message",  name, msg, colorCode, myId );
+      console.log(users);
+    io.emit("message",  name, msg, colorCode, myId, dateSent );
     io.emit("in-chat", Object.values(users));
   });
 });
