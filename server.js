@@ -1,9 +1,10 @@
 const app = require("express");
 // const { get } = require('https');
 const http = require("http").createServer(app);
+// const io = require("socket.io")(http);
 const io = require("socket.io")(http, {
   cors: {
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "https://swift-chat.netlify.app/"],
   },
 });
 
