@@ -6,34 +6,76 @@ const io = require("socket.io")(http, {
     origin: ["http://localhost:3000"],
   },
 });
- 
-const users = {};
-const names = [];
-const nameColorPair = {};
-let i = 0
 
+const users = {};
+const chatHistory = [
+  {
+    color: "teal",
+    // dateSent: "2020-08-13T12:45:27.667Z",
+    dateSent: 1529656291000,
+    msg: "The year is 2020",
+    name: "debs",
+    senderId: "WtyB3Gix_bPfa9UbAAAH",
+  },
+  {
+    color: "teal",
+    // dateSent: "2021-08-13T12:45:27.667Z",
+    dateSent: 1592814691000,
+    msg: "hello 2021",
+    name: "debs",
+    senderId: "WtyB3Gix_bPfa9UbAAAH",
+  },
+];
+
+const nameColorPair = {};
+let i = 0;
 io.on("connection", (socket) => {
+  // socket.onAny((eventName, ...args) => {
+  //   io.emit("in-chat", Object.values(users));
+  // });
   socket.on("username", (name) => {
     let response;
-    if (names.includes(name)) {
+    if (Object.values(users).includes(name)) {
       response = false;
     } else {
-      response = true; 
-      names.push(name);
+      console.log(name);
+      response = true;
+      let color;
+      switch (Math.floor(Math.random() * 7 + 1)) {
+        case 1:
+          color = "teal";
+          break;
+        case 2:
+          color = "green";
+          break;
+        case 3:
+          color = "orange";
+          break;
+        case 4:
+          color = "pink";
+          break;
+        case 5:
+          color = "purple";
+          break;
+        case 6:
+          color = "blue";
+          break;
+        case 7:
+          color = "deep-blue";
+          break;
+      }
+      nameColorPair[socket.id] = color;
       users[socket.id] = name;
-      io.to(socket.id).emit("my-id", socket.id);
-      nameColorPair[socket.id] = Math.floor(Math.random() * 7 + 1);
+      io.to(socket.id).emit("details", socket.id, chatHistory);
       io.emit("in-chat", Object.values(users));
-
     }
-    console.log(response); 
     io.emit("response", response);
   });
 
-  socket.on("msgSent", (name, msg, myId , dateSent) => {
-    let colorCode = nameColorPair[myId];
-      console.log(users);
-    io.emit("message",  name, msg, colorCode, myId, dateSent );
+  socket.on("msgSent", (name, msg, myId, dateSent) => {
+    let color = nameColorPair[myId];
+    chatHistory.push({ name, msg, color, senderId: myId, dateSent });
+    io.emit("message", name, msg, color, myId, dateSent);
     io.emit("in-chat", Object.values(users));
   });
 });
