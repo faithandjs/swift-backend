@@ -2,12 +2,13 @@ const app = require("express");
 // const { get } = require('https');
 const http = require("http").createServer(app);
 // const io = require("socket.io")(http);
-const io = require("socket.io")(http, {
-  cors: {
-    origin: ["http://localhost:3000", "https://swift-chat.netlify.app/"],
-  },
-});
-
+const io = require("socket.io")(http, {cors: true, origin: ["http://localhost:3000", "https://swift-chat.netlify.app/"] });
+// const io = require("socket.io")(http, {
+//   cors: {
+//     origin: ["http://localhost:3000", "https://swift-chat.netlify.app/"],
+//   },
+// });
+ 
 const users = { WtyB3Gix_bPfa9UbAAAH: "debs_admin" };
 const chatHistory = [
   {
