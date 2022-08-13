@@ -7,22 +7,20 @@ const io = require("socket.io")(http, {
   },
 });
 
-const users = {};
+const users = { WtyB3Gix_bPfa9UbAAAH: "debs_admin" };
 const chatHistory = [
   {
     color: "teal",
-    // dateSent: "2020-08-13T12:45:27.667Z",
     dateSent: 1529656291000,
     msg: "The year is 2020",
-    name: "debs",
+    name: "debs_admin",
     senderId: "WtyB3Gix_bPfa9UbAAAH",
   },
   {
     color: "teal",
-    // dateSent: "2021-08-13T12:45:27.667Z",
     dateSent: 1592814691000,
     msg: "hello 2021",
-    name: "debs",
+    name: "debs_admin",
     senderId: "WtyB3Gix_bPfa9UbAAAH",
   },
 ];
