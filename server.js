@@ -2,7 +2,7 @@ const app = require("express");
 // const { get } = require('https');
 const http = require("http").createServer(app);
 const io = require("socket.io")(http, {cors: true, origin: ["http://localhost:3000", "https://swift-chat.netlify.app/"] });
-
+const port = process.env.PORT || 4000
  
 const users = { WtyB3Gix_bPfa9UbAAAH: "debs_admin" };
 const chatHistory = [
@@ -72,7 +72,7 @@ io.on("connection", (socket) => {
   });
 });
 
-http.listen(4000, function () {
-  console.log("listening");
+http.listen(port, function () {
+  console.log("listening on:", port);
 });
 //Set-ExecutionPolicy RemoteSigned
