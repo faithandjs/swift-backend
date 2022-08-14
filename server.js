@@ -1,22 +1,19 @@
 const app = require("express");
 // const { get } = require('https');
 const http = require("http").createServer(app);
-const io = require("socket.io")(http, {cors: true, origin: ["http://localhost:3000", "https://swift-chat.netlify.app/"] });
-const port = process.env.PORT || 4000
- 
+const io = require("socket.io")(http, {
+  cors: true,
+  origin: ["http://localhost:3000", "https://swift-chat.netlify.app/"],
+});
+const port = process.env.PORT || 4000;
+
 const users = { WtyB3Gix_bPfa9UbAAAH: "debs_admin" };
+const names = [];
 const chatHistory = [
   {
     color: "teal",
-    dateSent: 1529656291000, 
-    msg: "Hi this is a test",
-    name: "debs_admin",
-    senderId: "WtyB3Gix_bPfa9UbAAAH",
-  },
-  {
-    color: "teal",
-    dateSent: 1655160593000,
-    msg: "hellooooo",
+    dateSent: 1660501068503,
+    msg: "Enjoy",
     name: "debs_admin",
     senderId: "WtyB3Gix_bPfa9UbAAAH",
   },
@@ -27,10 +24,11 @@ let i = 0;
 io.on("connection", (socket) => {
   socket.on("username", (name) => {
     let response;
-    if (Object.values(users).includes(name)) {
+    if (names.includes(name.toLowerCase())) {
       response = false;
     } else {
       response = true;
+      names.push(name.toLowerCase());
       let color;
       switch (Math.floor(Math.random() * 7 + 1)) {
         case 1:
@@ -55,19 +53,20 @@ io.on("connection", (socket) => {
           color = "deep-blue";
           break;
       }
-      console.log(name, color);
       nameColorPair[socket.id] = color;
       users[socket.id] = name;
-      io.to(socket.id).emit("details", socket.id, chatHistory);
-      io.emit("in-chat", Object.values(users));
     }
-    io.emit("response", response);
+    io.emit("response", response, socket.id);
   });
 
   socket.on("msgSent", (name, msg, myId, dateSent) => {
     let color = nameColorPair[myId];
     chatHistory.push({ name, msg, color, senderId: myId, dateSent });
     io.emit("message", name, msg, color, myId, dateSent);
+    io.emit("in-chat", Object.values(users));
+  });
+  socket.on("get-details", (id) => {
+    io.to(socket.id).emit("details", socket.id, chatHistory);
     io.emit("in-chat", Object.values(users));
   });
 });
