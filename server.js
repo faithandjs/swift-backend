@@ -1,27 +1,22 @@
 const app = require("express");
 // const { get } = require('https');
 const http = require("http").createServer(app);
-// const io = require("socket.io")(http);
 const io = require("socket.io")(http, {cors: true, origin: ["http://localhost:3000", "https://swift-chat.netlify.app/"] });
-// const io = require("socket.io")(http, {
-//   cors: {
-//     origin: ["http://localhost:3000", "https://swift-chat.netlify.app/"],
-//   },
-// });
+
  
 const users = { WtyB3Gix_bPfa9UbAAAH: "debs_admin" };
 const chatHistory = [
   {
     color: "teal",
-    dateSent: 1529656291000,
-    msg: "The year is 2020",
+    dateSent: 1529656291000, 
+    msg: "Hi this is a test",
     name: "debs_admin",
     senderId: "WtyB3Gix_bPfa9UbAAAH",
   },
   {
     color: "teal",
-    dateSent: 1592814691000,
-    msg: "hello 2021",
+    dateSent: 1655160593000,
+    msg: "hellooooo",
     name: "debs_admin",
     senderId: "WtyB3Gix_bPfa9UbAAAH",
   },
@@ -30,15 +25,11 @@ const chatHistory = [
 const nameColorPair = {};
 let i = 0;
 io.on("connection", (socket) => {
-  // socket.onAny((eventName, ...args) => {
-  //   io.emit("in-chat", Object.values(users));
-  // });
   socket.on("username", (name) => {
     let response;
     if (Object.values(users).includes(name)) {
       response = false;
     } else {
-      console.log(name);
       response = true;
       let color;
       switch (Math.floor(Math.random() * 7 + 1)) {
@@ -64,6 +55,7 @@ io.on("connection", (socket) => {
           color = "deep-blue";
           break;
       }
+      console.log(name, color);
       nameColorPair[socket.id] = color;
       users[socket.id] = name;
       io.to(socket.id).emit("details", socket.id, chatHistory);
