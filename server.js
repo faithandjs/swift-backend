@@ -66,7 +66,7 @@ io.on("connection", (socket) => {
     io.emit("in-chat", Object.values(users));
   });
   socket.on("get-details", (id) => {
-    io.to(socket.id).emit("details", socket.id, chatHistory);
+    io.to(socket.id).emit("details", chatHistory);
     io.emit("in-chat", Object.values(users));
   });
 });
