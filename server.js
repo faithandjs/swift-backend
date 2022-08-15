@@ -1,5 +1,4 @@
 const app = require("express");
-// const { get } = require('https');
 const http = require("http").createServer(app);
 const io = require("socket.io")(http, {
   cors: true,
@@ -61,10 +60,11 @@ io.on("connection", (socket) => {
     io.emit("response",socket.id, response);
   });
 
-  socket.on("msgSent", (name, msg, dateSent) => {
+  socket.on("msgSent", (name, msg, dateSent) => { 
     let color = users[name].color;
     chatHistory.push({ name, msg, color, senderId: users[name].id, dateSent });
-    io.emit("message", name, msg, color, users[name].id, dateSent);
+    io.emit("message", chatHistory);
+    // io.emit("message", name, msg, color, users[name].id, dateSent);
     sendNames();
   });
   socket.on("get-details", (id) => {
