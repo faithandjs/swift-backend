@@ -58,7 +58,7 @@ io.on("connection", (socket) => {
       users[name] = { name: name, color: color, id: socket.id };
     }
     console.log(users);
-    io.emit("response", response);
+    io.emit("response",socket.id, response);
   });
 
   socket.on("msgSent", (name, msg, dateSent) => {
