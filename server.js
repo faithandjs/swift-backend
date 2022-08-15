@@ -3,12 +3,12 @@ const app = require("express");
 const http = require("http").createServer(app);
 const io = require("socket.io")(http, {
   cors: true,
-  origin: ["http://localhost:3000", "https://swift-chat.netlify.app/"],
+  origin: ["http://localhost:3000", "*", "https://swift-chat.netlify.app/"],
 });
 const port = process.env.PORT || 4000;
 
-const users = { WtyB3Gix_bPfa9UbAAAH: "debs_admin" };
-const names = [];
+const users = { debs_admin: { name: "debs_admin", color: "teal" } };
+const names = ["debs_admin"];
 const chatHistory = [
   {
     color: "teal",
@@ -18,9 +18,11 @@ const chatHistory = [
     senderId: "WtyB3Gix_bPfa9UbAAAH",
   },
 ];
-
-const nameColorPair = {};
-let i = 0;
+const sendNames = () => {
+  const available = [];
+  Object.values(users).map((item) => available.push(item.name));
+  io.emit("in-chat", available);
+};
 io.on("connection", (socket) => {
   socket.on("username", (name) => {
     let response;
@@ -53,21 +55,21 @@ io.on("connection", (socket) => {
           color = "deep-blue";
           break;
       }
-      nameColorPair[socket.id] = color;
-      users[socket.id] = name;
+      users[name] = { name: name, color: color, id: socket.id };
     }
-    io.emit("response", response, socket.id);
+    console.log(users);
+    io.emit("response", response);
   });
 
-  socket.on("msgSent", (name, msg, myId, dateSent) => {
-    let color = nameColorPair[myId];
-    chatHistory.push({ name, msg, color, senderId: myId, dateSent });
-    io.emit("message", name, msg, color, myId, dateSent);
-    io.emit("in-chat", Object.values(users));
+  socket.on("msgSent", (name, msg, dateSent) => {
+    let color = users[name].color;
+    chatHistory.push({ name, msg, color, senderId: users[name].id, dateSent });
+    io.emit("message", name, msg, color, users[name].id, dateSent);
+    sendNames();
   });
   socket.on("get-details", (id) => {
-    io.to(socket.id).emit("details", chatHistory);
-    io.emit("in-chat", Object.values(users));
+    io.to(socket.id).emit("details", socket.id, id, chatHistory);
+    sendNames();
   });
 });
 
