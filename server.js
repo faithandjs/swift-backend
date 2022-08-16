@@ -65,6 +65,10 @@ io.on("connection", (socket) => {
     sendNames();
   });
   socket.on("msgSent", (name, msg, dateSent, avatar) => {
+    if(users[name] === undefined){
+      socket.emit('reset')
+      return;
+    }
     let color = users[name].color;
     chatHistory.push({
       name,
