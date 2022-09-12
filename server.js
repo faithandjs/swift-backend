@@ -27,9 +27,9 @@ const chatHistory = [
 const sendNames = () => {
   const available = [];
   Object.values(users).map((item) => available.push(item.name));
-  io.emit("in-chat", available,  Object.values(users));
+  io.emit("in-chat", available, Object.values(users));
 };
-io.on("connection", (socket) => { 
+io.on("connection", (socket) => {
   socket.on("username", (name) => {
     const response = names.includes(name.toLowerCase()) ? false : true;
     io.emit("response", socket.id, response);
@@ -61,12 +61,12 @@ io.on("connection", (socket) => {
         break;
     }
     users[name] = { name: name, color: color, id: socket.id, avatar: avatar };
-    console.log(users);
+    // console.log(users);
     sendNames();
   });
   socket.on("msgSent", (name, msg, dateSent, avatar) => {
-    if(users[name] === undefined){
-      socket.emit('reset')
+    if (users[name] === undefined) {
+      socket.emit("reset");
       return;
     }
     let color = users[name].color;
